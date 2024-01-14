@@ -2,14 +2,16 @@ const express = require('express')
 const app = express()
 app.use(express.json())
 const mongoose = require('mongoose');
+const dotenv = require("dotenv")
+dotenv.config()
 
 
-const port = 8000
-const server = 'localhost'
+const port = process.env.PORT
+const server = process.env.HOST
 
 async function dbConnect(){
 
-    await mongoose.connect('mongodb://127.0.0.1:27017/GreenBook').then(()=>{
+    await mongoose.connect(process.env.MONGODB_URI).then(()=>{
         console.log("Database connection established")
       })
       .catch  ((err)=>{
@@ -191,6 +193,21 @@ app.get('/users/:id',async(req,res)=>{
     }
 })
 
+// post route
+
+app.post('/users', async(req, res)=>{  
+    try {
+         const userData = req.body;
+     const user = new Users(userData);
+     user.save()
+     console.log(user);
+     res.status(200).json({data : user})
+ 
+   } catch (error) {
+     res.status(500).json({ message: error });
+   }
+ })
+ 
 
 // Delete route
 
