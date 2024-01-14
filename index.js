@@ -44,7 +44,7 @@ app.get('/buyers',async(req,res)=>{
 
 // post route
 
-app.post('/buyers', async(req, res)=>{
+app.post('/buyers', async(req, res)=>{  
    try {
         const buyerData = req.body;
     const buyer = new Buyers(buyerData);
@@ -143,14 +143,165 @@ app.listen(port, server, ()=>{
 
 
 
-const useerSchema = new mongoose.Schema({
+
+
+
+
+// for users
+
+const userSchema = new mongoose.Schema({
     'name' : String,
-    'username' : String,
     'email' : String,
     'phone' : String,
-    'date' : Date,
-    'id': Number,
-    'Address' : Object
+    'password' : String,
+    
 })
 
-const Users = mongoose.model("User", useerSchema)
+const Users = mongoose.model("User", userSchema)
+
+// get route for users
+app.get('/users',async(req,res)=>{
+    try {
+        const users = await Users.find({})  
+        res.status(200).json({data:users})
+    } catch (error) {
+        res.status(500).json({message : error.message})
+    }
+})
+
+
+// get route single user
+
+app.get('/users/:id',async(req,res)=>{
+    try {
+        const id = req.params.id
+        if (!mongoose.isValidObjectId(id) ) {
+            return res.status(500).json({message: "Invalid id"})
+        }
+        const user = await Users.findOne({_id:id})  
+
+
+        if (!user) {
+            return res.status(404).json({message: "user not found"})
+            
+        }
+        res.status(200).json({data:user})
+    } catch (error) {
+        res.status(500).json({message : error.message})
+    }
+})
+
+
+// Delete route
+
+app.delete("/users/:id", async(req, res)=>{
+    try {
+        const id = req.params.id
+        if (!mongoose.isValidObjectId(id)) {
+            res.status(500).json({message: "Invalid id"})
+        }
+
+        const user = await Users.findByIdAndDelete({_id: id})        
+        if (!user) {
+           return res.status(404).json({message: "the object is not exist"})
+        }
+            res.status(200).json({message : "buyer is deleted", data: user})
+        } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+})
+
+// Update Route
+
+app.put("/users/:id", async(req, res)=>{
+    const id = req.params.id;
+    if (!mongoose.isValidObjectId) {
+        res.json({message: "the object id is not valid"})
+    }
+    const userUpdate = req.body
+
+    const user = await Users.findByIdAndUpdate({_id: id}, userUpdate)
+
+    res.status(200).json({message: "user infos updated" , data: user})
+})
+
+
+
+// for Reviews
+
+const reviewSchema = new mongoose.Schema({
+    'name' : String,
+    'contact' : String,
+    'email' : String,
+    'profession' : String,
+    'message' : String
+    
+})
+
+const Reviews = mongoose.model("review", userSchema)
+
+// get route for users
+app.get('/reviews',async(req,res)=>{
+    try {
+        const reviews = await Reviews.find({})  
+        res.status(200).json({data:reviews})
+    } catch (error) {
+        res.status(500).json({message : error.message})
+    }
+})
+
+
+// get route single user
+
+app.get('/reviews/:id',async(req,res)=>{
+    try {
+        const id = req.params.id
+        if (!mongoose.isValidObjectId(id) ) {
+            return res.status(500).json({message: "Invalid id"})
+        }
+        const review = await Reviews.findOne({_id:id})  
+
+
+        if (!review) {
+            return res.status(404).json({message: "user not found"})
+            
+        }
+        res.status(200).json({data:review})
+    } catch (error) {
+        res.status(500).json({message : error.message})
+    }
+})
+
+
+// Delete route
+
+app.delete("/reviews/:id", async(req, res)=>{
+    try {
+        const id = req.params.id
+        if (!mongoose.isValidObjectId(id)) {
+            res.status(500).json({message: "Invalid id"})
+        }
+
+        const reveiw = await Reviews.findByIdAndDelete({_id: id})        
+        if (!reveiw) {
+           return res.status(404).json({message: "the object is not exist"})
+        }
+            res.status(200).json({message : "reveiw is deleted", data: reveiw})
+        } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+})
+
+// // Update Route
+
+// app.put("/reveiws/:id", async(req, res)=>{
+//     const id = req.params.id;
+//     if (!mongoose.isValidObjectId) {
+//         res.json({message: "the object id is not valid"})
+//     }
+//     const reveiwUpdate = req.body
+
+//     const user = await Users.findByIdAndUpdate({_id: id}, userUpdate)
+
+//     res.status(200).json({message: "user infos updated" , data: user})
+// })
