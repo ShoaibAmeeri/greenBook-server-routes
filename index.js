@@ -32,11 +32,11 @@ dbConnect()
 // -------------------------------------------Buyers Route------------------------------
 
 const buyerSchema = new mongoose.Schema({
-    'Name' : String,
-    'Email' : String,
-    'Phone' : String,
+    'name' : String,
+    'email' : String,
+    'phone' : String,
     'date' : Date,
-    'Address' : String
+    'address' : String
 })
 const Buyers = mongoose.model("Buyer", buyerSchema)
 // get buyers
@@ -125,7 +125,6 @@ app.patch("/buyers/:id", async (req, res) =>{
   const userSchema = new mongoose.Schema({
       'name' : String,
       'email' : String,
-      'phone' : String,
       'password' : String,
       
   })
@@ -249,6 +248,20 @@ app.patch("/buyers/:id", async (req, res) =>{
             res.status(500).json({message : error.message})
         }
     })
+
+      // post route
+  app.post('/reviews', async(req, res)=>{  
+    try {
+         const reviewData = req.body;
+     const review = new Reviews(reviewData);
+     review.save()
+     
+     res.status(200).json({data : review})
+ 
+   } catch (error) {
+     res.status(500).json({ message: error });
+   }
+ })
     // Delete route
     app.delete("/reviews/:id", async(req, res)=>{
         try {
