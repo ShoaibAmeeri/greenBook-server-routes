@@ -10,8 +10,6 @@ app.use(cors())
 dotenv.config()
 
 
-
-
 // -----------------------------------DB connection---------------------------------------------
 
 const port = process.env.PORT || 8000
@@ -133,11 +131,7 @@ app.patch("/buyers/:id", async (req, res) =>{
 
 
 
-
-
-
-
-  //----------------------------------for users---------------------------------
+//----------------------------------for users---------------------------------
   
   const userSchema = new mongoose.Schema({
       'name' : String,
@@ -235,13 +229,8 @@ app.patch("/buyers/:id", async (req, res) =>{
       }
     })
 
-
-
-
-
-
     
-    // -------------------------------for Reviews----------------------------------------------
+// -------------------------------for Reviews----------------------------------------------
     
     const reviewSchema = new mongoose.Schema({
         'name' : String,
@@ -345,9 +334,6 @@ app.patch("/buyers/:id", async (req, res) =>{
       })
 
 
-
-
-
 //----------------------------------Base uri reponse------------------------------------------
 
 app.get('/',(req,res)=>{
@@ -359,11 +345,3 @@ app.get('/',(req,res)=>{
 app.listen(port, server, ()=>{
     console.log(`server is listening on http://${server}:${port}`)
 })
-
-
-
-
-
-
-
-
