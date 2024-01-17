@@ -51,14 +51,31 @@ app.get('/buyers',async(req,res)=>{
 // post route
 app.post('/buyers', async(req, res)=>{  
    try {
-        const buyerData = req.body;
-    const buyer = new Buyers(buyerData);
-    buyer.save()
-    
+        const {email, name, phone, address} = req.body;
+        const err = []
+        if (!name) {
+          err.push("nameis required")
+        }
+        if (!email) {
+            err.push("email is required")
+        }
+        if (!phone) {
+            err.push("phone no is required")
+        }
+        if (!address) {
+            err.push("address no is required")
+        }
+        if (err.length > 0) {
+            return res.status(400).json({
+                status:"Validation error",
+                message : err
+            })}
+            
+    const buyer = new Buyers({email, name, phone, address});
+    buyer.save()    
     res.status(200).json({data : buyer})
-
   } catch (error) {
-    res.status(500).json({ message: error });
+    res.status(500).json({ message: error.message });
   }
 })
 // get single buyer
@@ -160,14 +177,29 @@ app.patch("/buyers/:id", async (req, res) =>{
   // post route
   app.post('/users', async(req, res)=>{  
       try {
-           const userData = req.body;
-       const user = new Users(userData);
+        const {name, email,  password } = req.body;
+        const err = []
+        if (!name) {
+          err.push("name is required")
+        }
+        if (!email) {
+            err.push("email is required")
+        }
+        if (!password) {
+            err.push("address no is required")
+        }
+        if (err) {
+            return res.status(400).json({
+                status:"Validation error",
+                message : err
+            })}
+       const user = new Users({email, name, password } );
        user.save()
        
        res.status(200).json({data : user})
    
      } catch (error) {
-       res.status(500).json({ message: error });
+       res.status(500).json({ message: error.message });
      }
    })
   // Delete route
@@ -248,11 +280,29 @@ app.patch("/buyers/:id", async (req, res) =>{
             res.status(500).json({message : error.message})
         }
     })
-
-      // post route
+    // post route
   app.post('/reviews', async(req, res)=>{  
     try {
-         const reviewData = req.body;
+         const {name , email, message } = req.body;
+
+         const err = []
+         if (!name) {
+            err.push("name is required")            
+         }
+         if(!email){
+            err.push("email is required")
+         }
+         if (!message) {
+            err.push("your message is required")
+         }
+
+         if (err.length > 0) {
+            res.status(400).json({
+                status : "validation error",
+                message : err
+            })
+         }
+
      const review = new Reviews(reviewData);
      review.save()
      
