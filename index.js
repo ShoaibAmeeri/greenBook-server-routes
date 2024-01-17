@@ -12,7 +12,7 @@ dotenv.config()
 
 
 
-// -----------------------------DB connection---------------------------------------------
+// -----------------------------------DB connection---------------------------------------------
 
 const port = process.env.PORT || 8000
 const server = process.env.HOST || 'localhost'
@@ -29,7 +29,7 @@ dbConnect()
 
 
 
-// -------------------------------------------Buyers Route------------------------------
+// -----------------------------------Buyers Route------------------------------
 
 const buyerSchema = new mongoose.Schema({
     'name' : String,
@@ -137,7 +137,7 @@ app.patch("/buyers/:id", async (req, res) =>{
 
 
 
-  //--------------------------------------------------------- for users---------------------------------
+  //----------------------------------for users---------------------------------
   
   const userSchema = new mongoose.Schema({
       'name' : String,
@@ -241,7 +241,7 @@ app.patch("/buyers/:id", async (req, res) =>{
 
 
     
-    // ----------------------------------for Reviews----------------------------------------------
+    // -------------------------------for Reviews----------------------------------------------
     
     const reviewSchema = new mongoose.Schema({
         'name' : String,
@@ -348,7 +348,7 @@ app.patch("/buyers/:id", async (req, res) =>{
 
 
 
-    // ------------------------------Base uri reponse------------------------------------------
+//----------------------------------Base uri reponse------------------------------------------
 
 app.get('/',(req,res)=>{
     console.log("Connection successfull")
