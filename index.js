@@ -292,13 +292,13 @@ app.patch("/buyers/:id", async (req, res) =>{
             })
          }
 
-     const review = new Reviews(reviewData);
+     const review = new Reviews({name , email, message });
      review.save()
      
      res.status(200).json({data : review})
  
    } catch (error) {
-     res.status(500).json({ message: error });
+     res.status(500).json({ message: error.message });
    }
  })
     // Delete route
@@ -333,6 +333,157 @@ app.patch("/buyers/:id", async (req, res) =>{
         }
       })
 
+
+
+
+
+
+
+
+
+
+      // -------------------------------for Reviews----------------------------------------------
+    
+    const bookSchema = new mongoose.Schema({
+        'name' : String,
+        'image' : String,
+        'price' : String,
+        'description' : String,
+        'stock' : String
+        
+    })
+    const Books = mongoose.model("Book", bookSchema)
+ 
+    app.post('/books', async(req, res)=>{  
+        try {
+            const {name , image, price} = req.body;
+
+                    //  if (!image) {
+                    //     res.status(400).json({messsage : "imgae link is required"})
+                    //  }
+                     const err = []
+                     if (!name) {
+                        err.push("name is required")            
+                     }
+                     if(!image){
+                        err.push("image is required")
+                     }
+                     if (!price) {
+                        err.push("price is required")
+                     }
+            
+                     if (err.length > 0) {
+                        res.status(400).json({
+                            status : "validation error",
+                            message : err
+                        })
+                     }
+
+
+              
+         const book = new Books({name, image, price} );
+         book.save()
+         
+         res.status(200).json({data : book})
+     
+       } catch (error) {
+         res.status(500).json({ message: error.message });
+       }
+     })
+    // get route for users
+  app.get('/books',async(req,res)=>{
+      try {
+          const books = await Books.find({})  
+          res.status(200).json({data:books})
+      } catch (error) {
+          res.status(500).json({message : error.message})
+      }
+  })
+    // get route single book
+    app.get('/books/:id',async(req,res)=>{
+        try {
+            const id = req.params.id
+            if (!mongoose.isValidObjectId(id) ) {
+                return res.status(500).json({message: "Invalid id"})
+            }
+            const book = await Books.findOne({_id:id})  
+    
+    
+            if (!book) {
+                return res.status(404).json({message: "user not found"})
+                
+            }
+            res.status(200).json({data:book})
+        } catch (error) {
+            res.status(500).json({message : error.message})
+        }
+    })
+    // post route
+//   app.post('/books', async(req, res)=>{  
+//     try {
+//          const {name , image, price} = req.body;
+
+//         //  if (!image) {
+//         //     res.status(400).json({messsage : "imgae link is required"})
+//         //  }
+//          const err = []
+//          if (!name) {
+//             err.push("name is required")            
+//          }
+//          if(!image){
+//             err.push("image is required")
+//          }
+//          if (!price) {
+//             err.push("price is required")
+//          }
+
+//          if (err.length > 0) {
+//             res.status(400).json({
+//                 status : "validation error",
+//                 message : err
+//             })
+//          }
+
+//      const book = new Books({name , image, price});
+//      book.save()
+     
+//      res.status(200).json({data : book})
+ 
+//    } catch (error) {
+//      res.status(500).json({ message: error.message });
+//    }
+//  })
+    // Delete route
+    // app.delete("/reviews/:id", async(req, res)=>{
+    //     try {
+    //         const id = req.params.id
+    //         if (!mongoose.isValidObjectId(id)) {
+    //             res.status(500).json({message: "Invalid id"})
+    //         }
+    
+    //         const reveiw = await Reviews.findByIdAndDelete({_id: id})        
+    //         if (!reveiw) {
+    //            return res.status(404).json({message: "the object is not exist"})
+    //         }
+    //             res.status(200).json({message : "reveiw is deleted", data: reveiw})
+    //         } catch (error) {
+    //         res.status(500).json({message: error.message})
+    //     }
+    // })
+    // Update Route
+    // app.patch("/reveiws/:id", async (req, res) =>{
+    //     try {
+    //         const id = req.params.id;
+    //         if (!mongoose.isValidObjectId(id)) {
+    //           return res.status(500).json({ message: "Invalid id" });
+    //         }
+    //         const reviewUpdate=req.body
+    //         const review=  await Reviews.findByIdAndUpdate({ _id: id }, reviewUpdate,{new:true})
+    //         res.status(200).json({ message: "user updated",data: review})
+    //     } catch (error) {
+    //         res.status(500).json({ message:error.message });
+    //     }
+    //   })
 
 //----------------------------------Base uri reponse------------------------------------------
 
