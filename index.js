@@ -349,18 +349,15 @@ app.patch("/buyers/:id", async (req, res) =>{
         'image' : String,
         'price' : String,
         'description' : String,
-        'stock' : String
+        'isAvail' : Boolean
+       
         
     })
     const Books = mongoose.model("Book", bookSchema)
  
-    app.post('/books', async(req, res)=>{  
+    app.post('/books', (req, res)=>{  
         try {
-            const {name , image, price} = req.body;
-
-                    //  if (!image) {
-                    //     res.status(400).json({messsage : "imgae link is required"})
-                    //  }
+            const {name , image, price, description} = req.body;
                      const err = []
                      if (!name) {
                         err.push("name is required")            
@@ -371,22 +368,19 @@ app.patch("/buyers/:id", async (req, res) =>{
                      if (!price) {
                         err.push("price is required")
                      }
-            
+                     if (!description) {
+                        err.push("description is required")
+                     }
                      if (err.length > 0) {
                         res.status(400).json({
                             status : "validation error",
                             message : err
                         })
                      }
-
-
-              
          const book = new Books({name, image, price} );
          book.save()
-         
          res.status(200).json({data : book})
-     
-       } catch (error) {
+     } catch (error) {
          res.status(500).json({ message: error.message });
        }
      })
@@ -394,7 +388,7 @@ app.patch("/buyers/:id", async (req, res) =>{
   app.get('/books',async(req,res)=>{
       try {
           const books = await Books.find({})  
-          res.status(200).json({data:books})
+          res.status(200).json(books)
       } catch (error) {
           res.status(500).json({message : error.message})
       }
@@ -413,7 +407,7 @@ app.patch("/buyers/:id", async (req, res) =>{
                 return res.status(404).json({message: "user not found"})
                 
             }
-            res.status(200).json({data:book})
+            res.status(200).json(book)
         } catch (error) {
             res.status(500).json({message : error.message})
         }
