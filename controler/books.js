@@ -1,16 +1,7 @@
-const express = require('express')
 const Books = require('../model/buyer');
 const { default: mongoose } = require('mongoose');
 
-
-
-
-const router = express.Router()
-
-
-
-
-router.post('/', (req, res)=>{  
+let createBook = (req, res)=>{  
     try {
         const {name , image, price, description} = req.body;
                  const err = []
@@ -38,18 +29,18 @@ router.post('/', (req, res)=>{
  } catch (error) {
      res.status(500).json({ message: error.message });
    }
- })
+ }
 // get route for users
-router.get('/',async(req,res)=>{
-  try {
-      const books = await Books.find({})  
-      res.status(200).json(books)
-  } catch (error) {
-      res.status(500).json({message : error.message})
+let getBooks = async(req,res)=>{
+    try {
+        const books = await Books.find({})  
+        res.status(200).json(books)
+    } catch (error) {
+        res.status(500).json({message : error.message})
+    }
   }
-})
 // get route single book
-router.get('/:id',async(req,res)=>{
+let getBook=async(req,res)=>{
     try {
         const id = req.params.id
         if (!mongoose.isValidObjectId(id) ) {
@@ -66,7 +57,7 @@ router.get('/:id',async(req,res)=>{
     } catch (error) {
         res.status(500).json({message : error.message})
     }
-})
+}
 // post route
   
 // Delete route
@@ -103,4 +94,8 @@ router.get('/:id',async(req,res)=>{
 
 // //----------------------------------Base uri reponse------------------------------------------
 
-module.exports = router
+module.exports = {
+    getBooks,
+    getBook,
+    createBook,
+}

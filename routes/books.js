@@ -1,74 +1,15 @@
-const express = require('express')
-const Books = require('../model/buyer');
-const { default: mongoose } = require('mongoose');
+const express = require("express");
+const { getBook, getBooks, createBook } = require("../controler/books");
+
+const router = express.Router();
+
+router.post("/", createBook);
+router.get("/", getBooks);
+router.get("/:id", getBook);
 
 
-
-
-const router = express.Router()
-
-
-
-
-router.post('/', (req, res)=>{  
-    try {
-        const {name , image, price, description} = req.body;
-                 const err = []
-                 if (!name) {
-                    err.push("name is required")            
-                 }
-                 if(!image){
-                    err.push("image is required")
-                 }
-                 if (!price) {
-                    err.push("price is required")
-                 }
-                 if (!description) {
-                    err.push("description is required")
-                 }
-                 if (err.length > 0) {
-                    res.status(400).json({
-                        status : "validation error",
-                        message : err
-                    })
-                 }
-     const book = new Books({name, image, price, description} );
-     book.save()
-     res.status(200).json({data : book})
- } catch (error) {
-     res.status(500).json({ message: error.message });
-   }
- })
-// get route for users
-router.get('/',async(req,res)=>{
-  try {
-      const books = await Books.find({})  
-      res.status(200).json(books)
-  } catch (error) {
-      res.status(500).json({message : error.message})
-  }
-})
-// get route single book
-router.get('/:id',async(req,res)=>{
-    try {
-        const id = req.params.id
-        if (!mongoose.isValidObjectId(id) ) {
-            return res.status(500).json({message: "Invalid id"})
-        }
-        const book = await Books.findOne({_id:id})  
-
-
-        if (!book) {
-            return res.status(404).json({message: "book does not exist"})
-            
-        }
-        res.status(200).json(book)
-    } catch (error) {
-        res.status(500).json({message : error.message})
-    }
-})
 // post route
-  
+
 // Delete route
 // router.delete("/books/:id", async(req, res)=>{
 //     try {
@@ -77,7 +18,7 @@ router.get('/:id',async(req,res)=>{
 //             res.status(500).json({message: "Invalid id"})
 //         }
 
-//         const book = await Books.findByIdAndDelete({_id: id})        
+//         const book = await Books.findByIdAndDelete({_id: id})
 //         if (!book) {
 //            return res.status(404).json({message: "the book  does not exist"})
 //         }
@@ -103,4 +44,4 @@ router.get('/:id',async(req,res)=>{
 
 // //----------------------------------Base uri reponse------------------------------------------
 
-module.exports = router
+module.exports = router;

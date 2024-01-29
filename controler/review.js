@@ -1,20 +1,16 @@
-const express = require("express");
 const Reviews = require("../model/review");
 const { default: mongoose } = require("mongoose");
 
-const router = express.Router();
-
-// get route for user
-router.get("/", async (req, res) => {
+let getReviews = async (req, res) => {
   try {
     const reviews = await Reviews.find({});
     res.status(200).json({ data: reviews });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-});
-// get route single user
-router.get("/:id", async (req, res) => {
+};
+// get route single review
+let getReview = async (req, res) => {
   try {
     const id = req.params.id;
     if (!mongoose.isValidObjectId(id)) {
@@ -29,9 +25,9 @@ router.get("/:id", async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-});
+};
 // post route
-router.post("/", async (req, res) => {
+let createReview = async (req, res) => {
   try {
     const { name, email, message } = req.body;
 
@@ -60,9 +56,9 @@ router.post("/", async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-});
+};
 // Delete route
-router.delete("/:id", async (req, res) => {
+let deleteReview = async (req, res) => {
   try {
     const id = req.params.id;
     if (!mongoose.isValidObjectId(id)) {
@@ -77,9 +73,9 @@ router.delete("/:id", async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-});
+};
 // Update Route
-router.patch("/:id", async (req, res) => {
+let updateReview = async (req, res) => {
   try {
     const id = req.params.id;
     if (!mongoose.isValidObjectId(id)) {
@@ -93,6 +89,12 @@ router.patch("/:id", async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-});
+};
 
-module.exports = router;
+module.exports = {
+  getReviews,
+  getReview,
+  createReview,
+  deleteReview,
+  updateReview,
+};

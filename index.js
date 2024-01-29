@@ -5,8 +5,8 @@ const dotenv = require("dotenv");
 
 const router = require("./routes/buyer");
 const userRoutes = require("./routes/user");
-const reviewRoutes = require("./controler/review");
-const bookRoutes = require("./controler/books");
+const reviewRoutes = require("./routes/review");
+const bookRoutes = require("./routes/books");
 const dbConnect = require("./utilies/config");
 
 const app = express();
