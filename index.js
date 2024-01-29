@@ -3,11 +3,11 @@ const morgan = require("morgan");
 const cors = require("cors");
 const dotenv = require("dotenv");
 
-const buyerRoutes = require("./controler/buyer");
-const userRoutes = require("./controler/user");
+const router = require("./routes/buyer");
+const userRoutes = require("./routes/user");
 const reviewRoutes = require("./controler/review");
 const bookRoutes = require("./controler/books");
-const dbConnect = require("./controler/utilies/config");
+const dbConnect = require("./utilies/config");
 
 const app = express();
 app.use(express.json());
@@ -20,7 +20,7 @@ dotenv.config();
 dbConnect();
 
 // Buyers Route
-app.use("/buyers", buyerRoutes);
+app.use("/buyers", router);
 
 //for users---------------------------------
 app.use("/users", userRoutes);
