@@ -1,5 +1,5 @@
 const express = require("express");
-const { getBook, getBooks, createBook } = require("../controler/books");
+const { getBook, getBooks, createBook, deleteBook } = require("../controler/books");
 
 const router = express.Router();
 
@@ -11,22 +11,7 @@ router.get("/:id", getBook);
 // post route
 
 // Delete route
-// router.delete("/books/:id", async(req, res)=>{
-//     try {
-//         const id = req.params.id
-//         if (!mongoose.isValidObjectId(id)) {
-//             res.status(500).json({message: "Invalid id"})
-//         }
-
-//         const book = await Books.findByIdAndDelete({_id: id})
-//         if (!book) {
-//            return res.status(404).json({message: "the book  does not exist"})
-//         }
-//             res.status(200).json({message : "book is deleted", data: book})
-//         } catch (error) {
-//         res.status(500).json({message: error.message})
-//     }
-// })
+router.delete("/books/:id",deleteBook)
 // Update Route
 // app.patch("/reveiws/:id", async (req, res) =>{
 //     try {

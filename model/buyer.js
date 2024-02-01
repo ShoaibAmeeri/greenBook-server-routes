@@ -2,14 +2,12 @@ const mongoose = require("mongoose")
 
 
 
-const bookSchema = new mongoose.Schema({
+const buyerSchema = new mongoose.Schema({
     'name' : String,
-    'image' : String,
-    'price' : String,
-    'description' : String,
-    'isAvail' : Boolean
-   
-    
+    'email' : String,
+    'phone' : String,
+    'date' : Date,
+    'address' : String
 })
-const Books = mongoose.model("Book", bookSchema)
-module.exports = Books
+const Buyers = mongoose.model("Buyer", buyerSchema)
+module.exports = Buyers

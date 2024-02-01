@@ -49,7 +49,7 @@ let createUser = async (req, res) => {
       });
     }
     const user = new Users({ email, name, password });
-    user.save();
+    await user.save();
 
     res.status(200).json({ data: user });
   } catch (error) {
@@ -90,6 +90,42 @@ let updateUser = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+let updatepassword = async (req, res) => {
+  try {
+    const id = req.params.id;
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(500).json({ message: "Invalid id" });
+    }
+
+    const {passwordUpdate} = req.body;
+    const user = await Users.findByIdAndUpdate({ _id: id }, passwordUpdate, {
+      new: true,
+    });
+    res.status(200).json({ message: "user updated", data: user });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+let loginUser = async(req,res)=>{
+  const {email, password} = req.body
+  Users.findOne({email: email})
+  .then(user=>{
+    if (user) {
+      if (user.password === password) {
+        res.json("success")
+      } else {
+        res.json("password is incorrect")
+      }
+      
+    }
+    else{
+      res.json("no record registered")
+    }
+  })
+
+}
+
 
 module.exports = {
   getUser,
@@ -97,4 +133,6 @@ module.exports = {
   createUser,
   deleteUser,
   updateUser,
+  updatepassword,
+  loginUser
 };

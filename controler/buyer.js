@@ -1,4 +1,4 @@
-const Buyers = require("../model/books");
+const Buyers = require("../model/buyer");
 const { default: mongoose } = require("mongoose");
 
 let getBuyers = async (req, res) => {
