@@ -28,7 +28,7 @@ let getUser = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-// post route
+// createUser
 let createUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -51,7 +51,11 @@ let createUser = async (req, res) => {
     const user = new Users({ email, name, password });
     await user.save();
 
-    res.status(200).json({ data: user });
+    res.status(200).json({ 
+      status: "User created Successfully",
+      token: await user.generateToken(),
+      userId: user._id
+     });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
