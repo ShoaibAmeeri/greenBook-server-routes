@@ -93,6 +93,7 @@ let updateUser = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+// updatePassword
 let updatepassword = async (req, res) => {
   try {
     const id = req.params.id;
@@ -112,28 +113,32 @@ let updatepassword = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
+// update info(email, name)
 let updateInfo = async (req, res) => {
   try {
-    const id = req.params.id
+    const id = req.params.id;
 
-    const {name, email} = req.body
+    const { name, email } = req.body;
 
-    const updatedInfo = await Users.findOneAndUpdate({_id: id}, {name, email},{
-      new: true
-    })
+    const updatedInfo = await Users.findOneAndUpdate(
+      { _id: id },
+      { name, email },
+      {
+        new: true,
+      }
+    );
 
     if (!updatedInfo) {
-      res.status(500).json({message : "error in update query"})
+      res.status(500).json({ message: "error in update query" });
     }
 
-    res.status(200).json({status : "update data successfully",
-  data : updateInfo})
-    
+    res
+      .status(200)
+      .json({ status: "update data successfully", data: updateInfo });
   } catch (error) {
-    res.status(500).json("intenal server error")
+    res.status(500).json("intenal server error");
   }
-}
+};
 
 let loginUser = async (req, res) => {
   const { email, password } = req.body;
@@ -158,5 +163,5 @@ module.exports = {
   updateUser,
   updatepassword,
   loginUser,
-  updateInfo
+  updateInfo,
 };

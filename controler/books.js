@@ -79,20 +79,6 @@ let deleteBook = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-// Update Route
-// app.patch("/reveiws/:id", async (req, res) =>{
-//     try {
-//         const id = req.params.id;
-//         if (!mongoose.isValidObjectId(id)) {
-//           return res.status(500).json({ message: "Invalid id" });
-//         }
-//         const reviewUpdate=req.body
-//         const review=  await Reviews.findByIdAndUpdate({ _id: id }, reviewUpdate,{new:true})
-//         res.status(200).json({ message: "user updated",data: review})
-//     } catch (error) {
-//         res.status(500).json({ message:error.message });
-//     }
-//   })
 
 // //----------------------------------Base uri reponse------------------------------------------
 

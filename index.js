@@ -21,16 +21,12 @@ dbConnect();
 
 // Buyers Route
 app.use("/buyers", router);
-
 //for users---------------------------------
 app.use("/users", userRoutes);
-
 // for Reviews----------------------------------------------
 app.use("/reviews", reviewRoutes);
-
 // for books----------------------------------------------
 app.use("/books", bookRoutes);
-
 // -----------------------------------------port host conneciton-------------------
 const port = process.env.PORT || 8000;
 const server = process.env.HOST || "localhost";
