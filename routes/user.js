@@ -16,10 +16,10 @@ const router = express.Router();
 router.get("/", getUsers);
 router.get("/:id", getUser);
 router.post("/", createUser);
-router.post("/login", loginUser);
 router.delete("/:id", deleteUser);
-router.patch("/:id", updateUser);
-router.patch("/pass/:id", updatepassword);
-router.patch("/info/:id", updateInfo);
+router.patch("/:id", updateUser); //update user
+router.patch("/pass/:id", updatepassword); //update only user password
+router.patch("/info/:id", updateInfo); //update user info (name and email)
 
+router.post("/login", loginUser);
 module.exports = router;

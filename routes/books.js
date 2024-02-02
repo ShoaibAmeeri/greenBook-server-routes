@@ -11,7 +11,7 @@ const router = express.Router();
 router.post("/", createBook);
 router.get("/", getBooks);
 router.get("/:id", getBook);
-router.delete("/books/:id", deleteBook);
+router.delete("/:id", deleteBook);
 
 // //----------------------------------Base uri reponse------------------------------------------
 
