@@ -7,7 +7,8 @@ const {
   deleteUser,
   updateUser,
   updatepassword,
-  loginUser
+  loginUser,
+  updateInfo
 } = require("../controler/user");
 
 const router = express.Router();
@@ -19,5 +20,6 @@ router.post("/login", loginUser);
 router.delete("/:id", deleteUser);
 router.patch("/:id", updateUser);
 router.patch("/pass/:id", updatepassword)
+router.patch("/info/:id", updateInfo)
 
 module.exports = router;

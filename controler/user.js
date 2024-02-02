@@ -1,7 +1,6 @@
 const Users = require("../model/user");
 const { default: mongoose } = require("mongoose");
 
-
 // get route for users
 let getUsers = async (req, res) => {
   try {
@@ -51,11 +50,11 @@ let createUser = async (req, res) => {
     const user = new Users({ email, name, password });
     await user.save();
 
-    res.status(200).json({ 
+    res.status(200).json({
       status: "User created Successfully",
       token: await user.generateToken(),
-      userId: user._id
-     });
+      userId: user._id,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -100,36 +99,56 @@ let updatepassword = async (req, res) => {
     if (!mongoose.isValidObjectId(id)) {
       return res.status(500).json({ message: "Invalid id" });
     }
-
-    const {passwordUpdate} = req.body;
-    const user = await Users.findByIdAndUpdate({ _id: id }, passwordUpdate, {
+    const pass = req.body;
+    const user = await Users.findOneAndUpdate({ _id: id }, pass, {
       new: true,
     });
-    res.status(200).json({ message: "user updated", data: user });
+
+    if (!user) {
+      res.status(400).json("some error in updating query");
+    }
+    res.status(200).json({ message: "password updated successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-let loginUser = async(req,res)=>{
-  const {email, password} = req.body
-  Users.findOne({email: email})
-  .then(user=>{
-    if (user) {
-      if (user.password === password) {
-        res.json("success")
-      } else {
-        res.json("password is incorrect")
-      }
-      
-    }
-    else{
-      res.json("no record registered")
-    }
-  })
+let updateInfo = async (req, res) => {
+  try {
+    const id = req.params.id
 
+    const {name, email} = req.body
+
+    const updatedInfo = await Users.findOneAndUpdate({_id: id}, {name, email},{
+      new: true
+    })
+
+    if (!updatedInfo) {
+      res.status(500).json({message : "error in update query"})
+    }
+
+    res.status(200).json({status : "update data successfully",
+  data : updateInfo})
+    
+  } catch (error) {
+    res.status(500).json("intenal server error")
+  }
 }
 
+let loginUser = async (req, res) => {
+  const { email, password } = req.body;
+  Users.findOne({ email: email }).then((user) => {
+    if (user) {
+      if (user.password === password) {
+        res.json("success");
+      } else {
+        res.json("password is incorrect");
+      }
+    } else {
+      res.json("no record registered");
+    }
+  });
+};
 
 module.exports = {
   getUser,
@@ -138,5 +157,6 @@ module.exports = {
   deleteUser,
   updateUser,
   updatepassword,
-  loginUser
+  loginUser,
+  updateInfo
 };
