@@ -1,5 +1,6 @@
 const Users = require("../model/user");
 const { default: mongoose } = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 // get route for users
 let getUsers = async (req, res) => {
@@ -84,11 +85,21 @@ let updateUser = async (req, res) => {
       return res.status(500).json({ message: "Invalid id" });
     }
 
-    const userUpdate = req.body;
-    const user = await Users.findByIdAndUpdate({ _id: id }, userUpdate, {
-      new: true,
+    const { name, email, password } = req.body;
+    bcrypt.hash(password, 10, async (err, hash) => {
+      if (err) {
+        res.status(500).json({ message: err.message });
+      }
+
+      const user = await Users.findByIdAndUpdate(
+        { _id: id },
+        { name, email, password: hash },
+        {
+          new: true,
+        }
+      );
+      res.status(200).json({ message: "user updated", data: user });
     });
-    res.status(200).json({ message: "user updated", data: user });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -100,15 +111,26 @@ let updatepassword = async (req, res) => {
     if (!mongoose.isValidObjectId(id)) {
       return res.status(500).json({ message: "Invalid id" });
     }
-    const pass = req.body;
-    const user = await Users.findOneAndUpdate({ _id: id }, pass, {
-      new: true,
-    });
+    const { password } = req.body;
+    bcrypt.hash(password, 10, async (err, hash) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ message: err.message });
+      }
 
-    if (!user) {
-      res.status(400).json("some error in updating query");
-    }
-    res.status(200).json({ message: "password updated successfully" });
+      const user = await Users.findOneAndUpdate(
+        { _id: id },
+        { password: hash },
+        {
+          new: true,
+        }
+      );
+
+      if (!user) {
+        res.status(400).json("some error in updating query");
+      }
+      res.status(200).json({ message: "password updated successfully", user });
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -145,7 +167,7 @@ let loginUser = async (req, res) => {
   Users.findOne({ email: email }).then((user) => {
     if (user) {
       if (user.password === password) {
-        res.json("success");
+        res.status(200).json("success");
       } else {
         res.json("password is incorrect");
       }

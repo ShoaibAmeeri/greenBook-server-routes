@@ -21,5 +21,6 @@ router.patch("/:id", updateUser); //update user
 router.patch("/pass/:id", updatepassword); //update only user password
 router.patch("/info/:id", updateInfo); //update user info (name and email)
 
-router.post("/login", loginUser);
+// router.post("/login", loginUser);
+router.route("/login").post(loginUser);
 module.exports = router;
