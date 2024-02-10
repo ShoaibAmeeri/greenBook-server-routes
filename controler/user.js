@@ -1,6 +1,7 @@
 const Users = require("../model/user");
 const { default: mongoose } = require("mongoose");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 // get route for users
 let getUsers = async (req, res) => {
@@ -80,27 +81,29 @@ let deleteUser = async (req, res) => {
 // Update Route
 let updateUser = async (req, res) => {
   try {
-    const id = req.params.id;
-    if (!mongoose.isValidObjectId(id)) {
-      return res.status(500).json({ message: "Invalid id" });
+    let token = req.headers.authorization;
+    if (!token) {
+      return res
+        .status(401)
+        .json({ message: "not authorized i.e. token is missing" });
     }
+    token = token.split(" ")[1];
+    console.log(token);
 
-    const { name, email, password } = req.body;
-    bcrypt.hash(password, 10, async (err, hash) => {
+    jwt.verify(token, process.env.JWT_SECRET_KEY, async (err, authData) => {
       if (err) {
-        res.status(500).json({ message: err.message });
+        return res
+          .status(500)
+          .json({ error: err.message, message: "token is not valid" });
       }
 
-      const user = await Users.findByIdAndUpdate(
-        { _id: id },
-        { name, email, password: hash },
-        {
-          new: true,
-        }
-      );
-      res.status(200).json({ message: "user updated", data: user });
-    });
-  } catch (error) {
+      let id = authData.id;
+      const userUpdate = req.body;
+      const user = await Users.findByIdAndUpdate({ _id: id }, userUpdate);
+
+      res.status(200).json({ message: "user info is updated", data: user });
+    });} catch (error) {
+    console.log(err.message)
     res.status(500).json({ message: error.message });
   }
 };
@@ -163,18 +166,39 @@ let updateInfo = async (req, res) => {
 };
 
 let loginUser = async (req, res) => {
-  const { email, password } = req.body;
-  Users.findOne({ email: email }).then((user) => {
-    if (user) {
-      if (user.password === password) {
-        res.status(200).json("success");
-      } else {
-        res.json("password is incorrect");
-      }
-    } else {
-      res.json("no record registered");
+  try {
+    const { email, password } = req.body;
+    const user = await Users.findOne({ email });
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: "user does not exist against this email" });
     }
-  });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (isMatch) {
+      jwt.sign(
+        { id: user._id },
+        process.env.JWT_SECRET_KEY,
+        { expiresIn: "1day", audience: "web_app" },
+        (err, token) => {
+          if (err) {
+            return res.status(500).json({ message: err.message });
+          }
+
+          return res.status(200).json({
+            message: "signin success",
+            user: { name: user.name, email: user.email, token: token },
+          });
+        }
+      );
+    } else {
+      return res.status(200).json({ message: "Invalid password" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 module.exports = {
