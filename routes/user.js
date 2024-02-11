@@ -16,9 +16,9 @@ const router = express.Router();
 router.get("/", getUsers);
 router.get("/:id", getUser);
 router.post("/", createUser);
-router.delete("/:id", deleteUser);
+router.delete("/", deleteUser);
 router.patch("/", updateUser); //update user
-router.patch("/pass/:id", updatepassword); //update only user password
+router.patch("/pass/", updatepassword); //update only user password
 router.patch("/info/:id", updateInfo); //update user info (name and email)
 
 // router.post("/login", loginUser);
