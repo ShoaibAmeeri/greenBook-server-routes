@@ -6,7 +6,7 @@ const {
   createUser,
   deleteUser,
   updateUser,
-  updatepassword,
+  updatePassword,
   loginUser,
   updateInfo,
 } = require("../controler/user");
@@ -19,7 +19,7 @@ router.get("/:id", getUser);
 router.post("/", createUser);
 router.delete("/", deleteUser);
 router.patch("/", checkAuth, updateUser); //update user
-router.patch("/pass/", checkAuth, updatepassword); //update only user password
+router.patch("/update-password/", checkAuth, updatePassword); //update only user password
 router.patch("/info/", checkAuth, updateInfo); //update user info (name and email)
 
 // router.post("/login", loginUser);

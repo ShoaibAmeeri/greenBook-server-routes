@@ -2,6 +2,7 @@ const Users = require("../model/user");
 const { default: mongoose } = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const Tokens = require('../model/token')
 
 // get route for users
 let getUsers = async (req, res) => {
@@ -110,33 +111,7 @@ let updateUser = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-// updatePassword
-let updatepassword = async (req, res) => {
-  try {
-    let id = req.body.id;
-    const { password } = req.body;
-    bcrypt.hash(password, 10, async (err, hash) => {
-      if (err) {
-        console.log(err);
-        return res.status(500).json({ message: err.message });
-      }
 
-      const user = await Users.findOneAndUpdate(
-        { _id: id },
-        { password: hash },
-        {
-          new: true,
-        }
-      );
-      if (!user) {
-        res.status(400).json("some error in updating query");
-      }
-      res.status(200).json({ message: "password updated successfully", user });
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
 // update info(email, name)
 let updateInfo = async (req, res) => {
   try {
@@ -181,10 +156,18 @@ let loginUser = async (req, res) => {
         { id: user._id },
         process.env.JWT_SECRET_KEY,
         { expiresIn: "1day", audience: "web_app" },
-        (err, token) => {
+         async(err, token) => {
           if (err) {
             return res.status(500).json({ message: err.message });
           }
+
+          const tokenData = new Tokens({
+            userId : user._id,
+            token: token
+          });
+          await tokenData.save()
+          
+
 
           return res.status(200).json({
             message: "signin success",
@@ -200,13 +183,70 @@ let loginUser = async (req, res) => {
   }
 };
 
+let updatePassword = async (req, res) => {
+  try {
+    let id = req.body.id;
+    const { password, newPassword } = req.body;
+
+    const errors = [];
+    if (!password) {
+      errors.push("current passowrd is required");
+    }
+    if (!newPassword) {
+      errors.push("new password is required");
+    }
+    if (errors.length > 0) {
+      res.status(500).json({ errors: errors });
+    }
+
+    const user = await Users.findOne({ _id: id });
+    if (!user) {
+      return;
+      res.status(404).json({ message: "user does not exist" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (isMatch) {
+      bcrypt.hash(newPassword, 10, async (err, hash) => {
+        if (err) {
+          return res
+            .status(500)
+            .json({ status: "hash error", message: err.message });
+        }
+        user.password = hash;
+        const response = await user.save();
+        if (response) {
+
+
+          // update all token in list to invalid
+
+          // const token = await Tokens.updateMany({userId: id}, {status: "invalid"})
+
+
+          return res.status(200).json({
+            message: "password has been changed",
+            user: { _id: user._id, name: user.name, email: user.email },
+          });
+        } else {
+          return res.status(500).json({ message: "passowrd is not changed" });
+        }
+      });
+    } else {
+      return res.status(500).json({ message: "current password is invalid" });
+    }
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getUser,
   getUsers,
   createUser,
   deleteUser,
   updateUser,
-  updatepassword,
+  updatePassword,
   loginUser,
   updateInfo,
 };
