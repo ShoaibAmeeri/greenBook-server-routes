@@ -1,8 +1,9 @@
+const Tokens = require("../model/token")
 const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
 dotenv.config()
 
-const checkAuth = (req, res, next) => {
+const checkAuth = async(req, res, next) => {
   try {
     let token = req.headers.authorization;
     if (!token) {
@@ -12,7 +13,13 @@ const checkAuth = (req, res, next) => {
     }
 
     token = token.split(" ")[1];
-    console.log(token);
+    
+    const tempToken = await Tokens.findOne({token : token})
+    if (tempToken.status === "invalid") {
+      return res.status(500).json({message: "your token is invalid"})
+    }
+
+  
     jwt.verify(token, process.env.JWT_SECRET_KEY, async (err, authData) => {
       if (err) {
         return res

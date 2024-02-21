@@ -39,33 +39,32 @@ let getUser = async (req, res) => {
 // createUser
 let createUser = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
-    const err = [];
-    if (!name) {
-      err.push("name is required");
-    }
-    if (!email) {
-      err.push("email is required");
-    }
-    if (!password) {
-      err.push("address no is required");
-    }
-    if (err.length > 0) {
-      return res.status(400).json({
-        status: "Validation error",
-        message: err,
-      });
-    }
-    const user = new Users({ email, name, password, role });
-    await user.save();
+    const { email, name, password, role } = req.body;
 
-    res.status(200).json({
-      status: "User created Successfully",
-      token: await user.generateToken(),
-      userId: user._id,
+    const user = await Users.findOne({ email });
+
+    if (user) {
+      return res.status(200).json({ message: "user exist against this email" });
+    }
+
+    bcrypt.hash(password, 10, async (err, hash) => {
+      if (err) {
+        return res.status(500).json({ message: err.message });
+      }
+
+      const user = new Users({ email, password: hash, name, role });
+      let respone = await user.save();
+      if (respone) {
+        return res.status(201).json({
+          message: "user created",
+          user: { _id: user._id, name: user.name, email: user.email },
+        });
+      } else {
+        return res.status(500).json({ message: "user not created" });
+      }
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error });
   }
 };
 // Delete route
@@ -220,12 +219,12 @@ let updatePassword = async (req, res) => {
 
           // update all token in list to invalid
 
-          // const token = await Tokens.updateMany({userId: id}, {status: "invalid"})
+          const token = await Tokens.updateMany({userId: id}, {status: "invalid"})
 
 
           return res.status(200).json({
             message: "password has been changed",
-            user: { _id: user._id, name: user.name, email: user.email },
+            user: { _id: user._id, name: user.name, email: user.email  },
           });
         } else {
           return res.status(500).json({ message: "passowrd is not changed" });
