@@ -169,7 +169,7 @@ let loginUser = async (req, res) => {
 
 
           return res.status(200).json({
-            message: "signin success",
+            
             user: { name: user.name, email: user.email, token: token },
           });
         }
