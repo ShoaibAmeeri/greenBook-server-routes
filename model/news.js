@@ -11,10 +11,10 @@ const newsSchema = new mongoose.Schema({
     type: String,
     require: true,
   },
-  isAvail: {
-    type: Boolean,
-    require: true,
-  },
+  // isAvail: {
+  //   type: Boolean,
+  //   require: true,
+  // },
 });
 const News = mongoose.model("News", newsSchema);
 module.exports = News;

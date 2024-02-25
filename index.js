@@ -7,6 +7,7 @@ const router = require("./routes/buyer");
 const userRoutes = require("./routes/user");
 const reviewRoutes = require("./routes/review");
 const bookRoutes = require("./routes/books");
+const newsRoutes = require("./routes/news")
 const dbConnect = require("./utilies/config");
 
 const app = express();
@@ -27,6 +28,8 @@ app.use("/users", userRoutes);
 app.use("/reviews", reviewRoutes);
 // for books----------------------------------------------
 app.use("/books", bookRoutes);
+// for News----------------------------------------------
+app.use("/news", newsRoutes);
 // -----------------------------------------port host conneciton-------------------
 const port = process.env.PORT || 8000;
 const server = process.env.HOST || "localhost";
