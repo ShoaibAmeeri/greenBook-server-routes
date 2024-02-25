@@ -1,17 +1,17 @@
 const express = require("express");
 const {
-  // getBook,
+  getBook,
   getBooks,
-  // createBook,
-  // deleteBook,
+  createBook,
+  deleteBook,
 } = require("../controler/books");
 
 const router = express.Router();
 
-// router.post("/", createBook);
+router.post("/", createBook);
 router.get("/", getBooks);
-// router.get("/:id", getBook);
-// router.delete("/:id", deleteBook);
+router.get("/:id", getBook);
+router.delete("/:id", deleteBook);
 
 // //----------------------------------Base uri reponse------------------------------------------
 
