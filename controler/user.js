@@ -64,7 +64,7 @@ let createUser = async (req, res) => {
       }
     });
   } catch (error) {
-    return res.status(500).json({ message: error });
+    return res.status(501).json({ message: error.message });
   }
 };
 // Delete route
@@ -186,58 +186,60 @@ let updatePassword = async (req, res) => {
   try {
     let id = req.body.id;
     const { password, newPassword } = req.body;
+    let errors = [];
+    if(!password){
+      errors.push({message:"password is required"})
+    }
+    if(!newPassword){
+      errors.push({message:"new password is required"})
+    }
 
-    const errors = [];
-    if (!password) {
-      errors.push("current passowrd is required");
+    if(errors.length > 0){
+      return res.status(400).json({message:"bad request",errors:errors})
     }
-    if (!newPassword) {
-      errors.push("new password is required");
-    }
-    if (errors.length > 0) {
-      res.status(500).json({ errors: errors });
-    }
+
+
 
     const user = await Users.findOne({ _id: id });
+
     if (!user) {
-      return;
-      res.status(404).json({ message: "user does not exist" });
+      return res
+        .status(404)
+        .json({ message: "user does not exist against this id" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (isMatch) {
       bcrypt.hash(newPassword, 10, async (err, hash) => {
         if (err) {
-          return res
-            .status(500)
-            .json({ status: "hash error", message: err.message });
+          return res.status(500).json({ message: err.message });
         }
         user.password = hash;
         const response = await user.save();
         if (response) {
 
 
-          // update all token in list to invalid
-
-          const token = await Tokens.updateMany({userId: id}, {status: "invalid"})
-
+          // update all your token in list to invalid 
+         
+          const token = await Tokens.updateMany({ userId: id }, {status:"invalid"});
 
           return res.status(200).json({
             message: "password has been changed",
-            user: { _id: user._id, name: user.name, email: user.email  },
+            user: { _id: user._id, name: user.name, email: user.email },
           });
         } else {
-          return res.status(500).json({ message: "passowrd is not changed" });
+          return res.status(500).json({ message: "password is not changed" });
         }
       });
     } else {
-      return res.status(500).json({ message: "current password is invalid" });
+      return res.status(200).json({ message: "Current password is invalid" });
     }
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
+
+
 
 module.exports = {
   getUser,
