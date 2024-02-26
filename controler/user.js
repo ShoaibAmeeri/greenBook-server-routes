@@ -98,16 +98,26 @@ let deleteUser = async (req, res) => {
   }
 };
 // Update Route
+// let updateUser = async (req, res) => {
+//   try {
+//     let id = req.body.id;
+//     const userUpdate = req.body;
+//     const user = await Users.findByIdAndUpdate({ _id: id }, userUpdate);
+
+//     res.status(200).json({ message: "user info is updated", data: user });
+//   } catch (error) {
+//     console.log(err.message);
+//     res.status(500).json({ message: error.message });
+//   }
+// };
 let updateUser = async (req, res) => {
   try {
     let id = req.body.id;
-    const userUpdate = req.body;
-    const user = await Users.findByIdAndUpdate({ _id: id }, userUpdate);
-
+    const {name, filePath} = req.body;
+    const user = await Users.findByIdAndUpdate({ _id: id }, {name, image:filePath});
     res.status(200).json({ message: "user info is updated", data: user });
   } catch (error) {
-    console.log(err.message);
-    res.status(500).json({ message: error.message });
+    return res.status(501).json({ error: error.message });
   }
 };
 

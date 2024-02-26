@@ -30,7 +30,8 @@ const checkAuth = async(req, res, next) => {
       next()
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(501).json({ message: error.message })
+    console.log(error);
   }
 };
 

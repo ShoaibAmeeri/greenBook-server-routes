@@ -19,7 +19,10 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     default: "buyer"
-  }
+  },
+  image: {
+    type: String,
+      }
 });
 
 // userSchema.pre("save", async function (next) {
